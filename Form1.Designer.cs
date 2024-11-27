@@ -58,6 +58,7 @@
             IPBox.Name = "IPBox";
             IPBox.Size = new Size(145, 23);
             IPBox.TabIndex = 2;
+            IPBox.KeyPress += ValidateIP;
             // 
             // PortBox
             // 

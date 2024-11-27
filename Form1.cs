@@ -3,9 +3,11 @@ namespace AOTW_P2PChat
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
+    using Microsoft.Data.Sqlite;
+    using System.Collections.Generic;
+
     public partial class Form1 : Form
     {
-
         IPAddress? SendToIP = IPAddress.Parse("127.0.0.1");
         TcpClient client = new();
         TcpListener Listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8080);
@@ -15,7 +17,23 @@ namespace AOTW_P2PChat
             InitializeComponent();
             ReadBox.ReadOnly = true;
             this.IPBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(ValidateIP);
+            StartMessageDB();
             Listener.Start();
+        }
+
+        public void StartMessageDB()
+        {
+            if (!File.Exists("MessageHistory.db"))
+            {
+                File.Create("MessageHistory.db");
+            }
+
+            var DBconnection = new SqliteConnection($"Data Source=MessageHistory.db");
+            DBconnection.Open();
+            string MakeTable = "CREATE TABLE IF NOT EXISTS MessageHistory (IPAddr STRING PRIMARY KEY, ChatLog NVARCHAR(2048) NULL)";
+            var CommandRunner = new SqliteCommand(MakeTable);
+            CommandRunner.Connection = DBconnection;
+            CommandRunner.ExecuteReader();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -31,9 +49,8 @@ namespace AOTW_P2PChat
 
         private void ValidateIP(object? sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            if (!IPAddress.TryParse(IPBox.Text, out SendToIP) && e.KeyChar == (char)Keys.Return)
+            if (!IPAddress.TryParse(IPBox.Text, out SendToIP))
             {
-                Console.WriteLine("IP Address is invalid");
                 IPBox.ForeColor = Color.Red;
             }
             else
@@ -70,7 +87,8 @@ namespace AOTW_P2PChat
                 byte[] buffer = new byte[clientReceive.ReceiveBufferSize];
                 int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
                 string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                this.Invoke(() => ReadBox.AppendText(dataReceived + '\n'));
+                string TimeStamp = DateTime.Now.ToShortTimeString();
+                this.Invoke(() => ReadBox.AppendText(TimeStamp + ": " + dataReceived + '\n'));
                 await Task.Delay(100);
             }
         }
