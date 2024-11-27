@@ -24,7 +24,7 @@ Stretch goals will be added once the base functions are ready.
 | **Day**       | **Progress**                                                   |
 |---------------|----------------------------------------------------------------|
 | **Monday:**   | Added send and receive functions. They run as their own task.  |
-| **Tuesday:**  |                                                                |
+| **Tuesday:**  | Add Timestamps to Message, WIP message history DB, Qol         |
 | **Wednesday:**|                                                                |
 | **Thursday:** |                                                                |
 | **Friday:**   |                                                                |
