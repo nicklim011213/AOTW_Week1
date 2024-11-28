@@ -12,11 +12,13 @@ namespace AOTW_P2PChat
         TcpClient client = new();
         TcpListener Listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8080);
         bool send = false;
+        SqliteConnection DBconnection = new SqliteConnection($"Data Source=MessageHistory.db");
+
         public Form1()
         {
             InitializeComponent();
             ReadBox.ReadOnly = true;
-            this.IPBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(ValidateIP);
+            this.IPBox.TextChanged += ValidateIP;
             StartMessageDB();
             Listener.Start();
         }
@@ -27,12 +29,9 @@ namespace AOTW_P2PChat
             {
                 File.Create("MessageHistory.db");
             }
-
-            var DBconnection = new SqliteConnection($"Data Source=MessageHistory.db");
             DBconnection.Open();
-            string MakeTable = "CREATE TABLE IF NOT EXISTS MessageHistory (IPAddr STRING PRIMARY KEY, ChatLog NVARCHAR(2048) NULL)";
-            var CommandRunner = new SqliteCommand(MakeTable);
-            CommandRunner.Connection = DBconnection;
+            string MakeTable = "CREATE TABLE IF NOT EXISTS MessageHistory (MessageID INT PRIMARY KEY, IPAddr STRING, ChatLog NVARCHAR(2048) NULL)";
+            var CommandRunner = new SqliteCommand(MakeTable, DBconnection);
             CommandRunner.ExecuteReader();
         }
 
@@ -47,7 +46,7 @@ namespace AOTW_P2PChat
             send = true;
         }
 
-        private void ValidateIP(object? sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void ValidateIP(object? sender, EventArgs e)
         {
             if (!IPAddress.TryParse(IPBox.Text, out SendToIP))
             {
@@ -56,6 +55,7 @@ namespace AOTW_P2PChat
             else
             {
                 IPBox.ForeColor = Color.Black;
+                ReplayMessages();
             }
         }
 
@@ -89,8 +89,29 @@ namespace AOTW_P2PChat
                 string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                 string TimeStamp = DateTime.Now.ToShortTimeString();
                 this.Invoke(() => ReadBox.AppendText(TimeStamp + ": " + dataReceived + '\n'));
+                var MessageID = FindNextMessageId();
+                string AppendMessageToDB = "INSERT INTO MessageHistory VALUES (" + MessageID.ToString() + " , '" + SendToIP + "','" + dataReceived + "')";
+                var CommandRunner = new SqliteCommand(AppendMessageToDB, DBconnection);
+                CommandRunner.ExecuteNonQuery();
                 await Task.Delay(100);
             }
+        }
+
+        int FindNextMessageId()
+        {
+            string FindNextId = "SELECT IFNULL(MAX(MessageID),0) FROM MessageHistory";
+            var Command = new SqliteCommand(FindNextId, DBconnection);
+            var Result = Command.ExecuteScalar();
+            int MessageId = Convert.ToInt32(Result);
+            return MessageId + 1;
+        }
+
+        void ReplayMessages()
+        {
+            string CollectMessages = "SELECT GROUP_CONCAT(ChatLog, '\n') FROM MessageHistory WHERE IpAddr = " + "'" + SendToIP.ToString() + "'";
+            var Command = new SqliteCommand(CollectMessages, DBconnection);
+            var Result = Command.ExecuteScalar();
+            this.Invoke(() => ReadBox.AppendText(Result.ToString()));
         }
     }
 }
