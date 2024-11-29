@@ -54,6 +54,7 @@
             // 
             // IPBox
             // 
+            IPBox.BackColor = SystemColors.MenuHighlight;
             IPBox.Location = new Point(12, 12);
             IPBox.Name = "IPBox";
             IPBox.Size = new Size(145, 23);
@@ -62,6 +63,7 @@
             // 
             // PortBox
             // 
+            PortBox.BackColor = SystemColors.MenuHighlight;
             PortBox.Location = new Point(163, 12);
             PortBox.Name = "PortBox";
             PortBox.Size = new Size(62, 23);
@@ -69,16 +71,19 @@
             // 
             // ReadBox
             // 
+            ReadBox.BackColor = SystemColors.ControlDarkDark;
             ReadBox.Location = new Point(12, 62);
             ReadBox.Name = "ReadBox";
             ReadBox.Size = new Size(776, 304);
             ReadBox.TabIndex = 4;
             ReadBox.Text = "";
+            ReadBox.TextChanged += ReadBox_TextChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.WindowFrame;
             ClientSize = new Size(800, 450);
             Controls.Add(ReadBox);
             Controls.Add(PortBox);
