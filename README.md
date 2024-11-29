@@ -26,7 +26,7 @@ Stretch goals will be added once the base functions are ready.
 | **Monday:**   | Added send and receive functions. They run as their own task.  |
 | **Tuesday:**  | Add Timestamps to Message, WIP message history DB, Qol         |
 | **Wednesday:**| Finish saving messages to DB, need to work on fixing issues    |
-| **Thursday:** |                                                                |
+| **Thursday:** | Fix SQL Injection, Fix Message Bug. Fix Crashing. UI edits     |
 | **Friday:**   |                                                                |
 | **Saturday:** |                                                                |
 | **Sunday:**   |                                                                |
