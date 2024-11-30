@@ -82,9 +82,9 @@ namespace AOTW_P2PChat
                 int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
                 string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                 string TimeStamp = DateTime.Now.ToShortTimeString();
-                this.Invoke(() => ReadBox.AppendText(TimeStamp + ": " + dataReceived + '\n'));
+                this.Invoke(() => ReadBox.AppendText(TimeStamp + " : " + dataReceived + '\n'));
 
-                AddMessageToDB(dataReceived);
+                AddMessageToDB(TimeStamp + " : " + dataReceived);
                 await Task.Delay(100);
             }
         }
@@ -105,6 +105,10 @@ namespace AOTW_P2PChat
             Command.Parameters.AddWithValue("@CurrentIP", SendToIP.ToString());
             var Result = Command.ExecuteScalar();
             this.Invoke(() => ReadBox.AppendText(Result.ToString()));
+            if (Result.ToString().Length > 0)
+            {
+                this.Invoke(() => ReadBox.AppendText("\n"));
+            }
         }
 
         void AddMessageToDB(string message)
