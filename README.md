@@ -16,7 +16,7 @@ The base goal is to **send and receive messages** between users using an **IP an
 Stretch goals will be added once the base functions are ready.
 
 **Stretch goals will be added here:**  
-(None so far)
+Message history using SQLite DB. (Completed)
 
 ---
 
