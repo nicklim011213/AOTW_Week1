@@ -27,6 +27,6 @@ Stretch goals will be added once the base functions are ready.
 | **Tuesday:**  | Add Timestamps to Message, WIP message history DB, Qol         |
 | **Wednesday:**| Finish saving messages to DB, need to work on fixing issues    |
 | **Thursday:** | Fix SQL Injection, Fix Message Bug. Fix Crashing. UI edits     |
-| **Friday:**   |                                                                |
+| **Friday:**   | Fix newline issue with history, Fix no timestamp on history    |
 | **Saturday:** |                                                                |
 | **Sunday:**   |                                                                |
